@@ -1,30 +1,38 @@
-# Test monitoring dashboard
+# Test Monitoring Dashboard
 
-*Automatically synced with your [v0.app](https://v0.app) deployments*
-
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/thwak820-7837s-projects/v0-metamorphic-testing)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.app-black?style=for-the-badge)](https://v0.app/chat/hVAK4cm6U2v)
-
-## Overview
-
-This repository will stay in sync with your deployed chats on [v0.app](https://v0.app).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.app](https://v0.app).
+A demo project for a metamorphic test monitoring dashboard.
 
 ## Deployment
 
-Your project is live at:
+Live URL:
+[Vercel Live Link](https://metamorphic-demo.vercel.app)
 
-**[https://vercel.com/thwak820-7837s-projects/v0-metamorphic-testing](https://vercel.com/thwak820-7837s-projects/v0-metamorphic-testing)**
+## How to Run Locally
 
-## Build your app
+### Prerequisites
 
-Continue building your app on:
+You need **Node.js** installed to use **npm** or **pnpm**.
 
-**[https://v0.app/chat/hVAK4cm6U2v](https://v0.app/chat/hVAK4cm6U2v)**
+### Steps to Run Locally
 
-## How It Works
-
-1. Create and modify your project using [v0.app](https://v0.app)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
+1. **Install dependencies:**
+    
+    ```bash
+    npm install
+    # or
+    pnpm install
+    # If there is a dependency conflict:
+    # npm install --legacy-peer-deps
+    ```
+    
+2. **Run the development server:**
+    
+    ```bash
+    npm run dev
+    # or
+    pnpm run dev
+    ```
+    
+3. **Access the application:**
+    - Open your browser and navigate to:
+    - http://localhost:3000
