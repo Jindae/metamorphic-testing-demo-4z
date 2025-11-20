@@ -1,0 +1,32 @@
+[
+  {
+    "id": "1",
+    "name": "User Authentication Test",
+    "description": "Tests user login and authentication flow",
+    "image": "/login-form-interface.jpg",
+    "prompt": "Login with valid credentials and verify dashboard access",
+    "expectedResult": "User successfully logs in and sees dashboard",
+    "type": "Image",
+    "registeredAt": "2024-01-15T10:30:00Z"
+  },
+  {
+    "id": "2",
+    "name": "Payment Processing Test",
+    "description": "Validates payment gateway integration",
+    "image": "/payment-checkout-screen.jpg",
+    "prompt": "Process a payment transaction with test card",
+    "expectedResult": "Payment is processed successfully and confirmation is displayed",
+    "type": "Image",
+    "registeredAt": "2024-01-14T14:20:00Z"
+  },
+  {
+    "id": "3",
+    "name": "API Response Validation",
+    "description": "Checks API response formats and data",
+    "image": "/api-data-visualization.jpg",
+    "prompt": "Call the user API endpoint and validate response structure",
+    "expectedResult": "API returns valid JSON with correct user data fields",
+    "type": "Image",
+    "registeredAt": "2024-01-10T09:15:00Z"
+  }
+]

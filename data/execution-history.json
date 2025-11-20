@@ -1,0 +1,16 @@
+{
+  "1": [
+    {
+      "id": "exec1",
+      "timestamp": "2024-01-16T15:45:00Z",
+      "totalTests": 25,
+      "passed": 22,
+      "failed": 3,
+      "successRate": 88,
+      "mrResults": {
+        "Rotation": { "passed": 18, "failed": 2 },
+        "Greyscale": { "passed": 4, "failed": 1 }
+      }
+    }
+  ]
+}

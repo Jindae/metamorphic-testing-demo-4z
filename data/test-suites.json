@@ -1,0 +1,56 @@
+[
+  {
+    "id": "1",
+    "name": "Sample Authentication Suite",
+    "description": "Testing authentication flow with various transformations",
+    "selectedSeedTest": {
+      "id": "1",
+      "name": "User Authentication Test",
+      "description": "Tests user login and authentication flow",
+      "image": "/login-form-interface.jpg",
+      "prompt": "Login with valid credentials and verify dashboard access",
+      "expectedResult": "User successfully logs in and sees dashboard",
+      "type": "Image",
+      "registeredAt": "2024-01-15T10:30:00Z"
+    },
+    "metamorphicRelations": [
+      {
+        "id": "mr1",
+        "name": "Rotation",
+        "type": "Rotation",
+        "generatedCount": 20
+      },
+      {
+        "id": "mr2",
+        "name": "Greyscale",
+        "type": "Greyscale",
+        "generatedCount": 5
+      }
+    ],
+    "generatedTests": [
+      {
+        "id": "test1",
+        "name": "Test 1",
+        "image": "/login-form-interface.jpg",
+        "mrUsed": "Rotation",
+        "expectedResult": "User successfully logs in and sees dashboard"
+      },
+      {
+        "id": "test2",
+        "name": "Test 2",
+        "image": "/login-form-interface.jpg",
+        "mrUsed": "Rotation",
+        "expectedResult": "User successfully logs in and sees dashboard"
+      },
+      {
+        "id": "test3",
+        "name": "Test 3",
+        "image": "/login-form-interface.jpg",
+        "mrUsed": "Greyscale",
+        "expectedResult": "User successfully logs in and sees dashboard"
+      }
+    ],
+    "totalTests": 25,
+    "savedAt": "2024-01-16T15:30:00Z"
+  }
+]

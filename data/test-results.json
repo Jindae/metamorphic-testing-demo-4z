@@ -1,0 +1,22 @@
+{
+  "Noise Injection": {
+    "total": 10,
+    "passed": 4,
+    "failed": 6
+  },
+  "Greyscale": {
+    "total": 5,
+    "passed": 5,
+    "failed": 0
+  },
+  "Rotation": {
+    "total": 20,
+    "passed": 9,
+    "failed": 11
+  },
+  "Size Adjustment": {
+    "total": 10,
+    "passed": 8,
+    "failed": 2
+  }
+}
