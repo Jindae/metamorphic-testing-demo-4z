@@ -284,13 +284,13 @@ export default function TestMonitoringDashboard() {
                 <FlaskConical className="h-5 w-5 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="text-xl font-semibold text-foreground">Test Monitoring</h1>
-                <p className="text-sm text-muted-foreground">Metamorphic Testing Dashboard</p>
+                <h1 className="text-xl font-semibold text-foreground">Metamorphic Testing Dashboard</h1>
+                <p className="text-sm text-muted-foreground">A Metamorphic Testing Framework for Physical AI</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
               <div className="rounded-md bg-muted px-3 py-1.5">
-                <span className="text-sm font-medium text-foreground">Production</span>
+                <span className="text-sm font-medium text-foreground">Demo</span>
               </div>
             </div>
           </div>
