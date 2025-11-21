@@ -227,7 +227,7 @@ export function TestResultStatistics({
     }
   }
 
-  const toggleHistorySelection = (entryId: string, e: React.MouseEvent) => {
+  const toggleHistorySelection = (entryId: string, e: React.MouseEvent | React.ChangeEvent) => {
     e.stopPropagation()
     const newSelection = new Set(selectedHistoryIds)
     if (newSelection.has(entryId)) {
@@ -439,7 +439,7 @@ export function TestResultStatistics({
                           <LabelList
                             dataKey="successRate"
                             position="top"
-                            formatter={(value: number) => `${value}%`}
+                            formatter={(value) => (typeof value === 'number' ? `${value}%` : '')}
                             style={{ fill: "hsl(var(--foreground))", fontSize: "14px", fontWeight: "600" }}
                           />
                         </Bar>

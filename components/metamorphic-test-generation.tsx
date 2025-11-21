@@ -191,7 +191,7 @@ export function MetamorphicTestGeneration({
           const newTest: GeneratedTest = {
             id: `test-${Date.now()}-${Math.random()}`,
             name: `Test ${testCounter}`,
-            image: selectedSeedTest.image,
+            image: selectedSeedTest.image || "",
             mrUsed: mr.name,
             expectedResult: selectedSeedTest.expectedResult,
           }

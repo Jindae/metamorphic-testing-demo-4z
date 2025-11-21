@@ -9,7 +9,18 @@ import { Plus, FileText, Clock } from "lucide-react"
 import { RegisterTestDialog } from "@/components/dialogs/register-test-dialog"
 import { TestDetailsDialog } from "@/components/dialogs/test-details-dialog"
 import { TestSuiteDetailsDialog } from "@/components/dialogs/test-suite-details-dialog"
-import type { Test, SavedTestSuite } from "@/app/page"
+import { SavedTestSuite } from "@/app/page"
+
+export interface Test {
+  id: string
+  name: string
+  description: string
+  image?: string
+  prompt: string
+  expectedResult: string
+  type: string
+  registeredAt: string
+}
 
 interface TestRegistrationProps {
   tests: Test[]
@@ -126,7 +137,7 @@ export function TestRegistration({ tests, setTests, savedTestSuites, onDeleteTes
                   <div>
                     <h3 className="font-medium text-foreground">{test.name}</h3>
                     <p className="text-sm text-muted-foreground">
-                      {test.type} • Registered {new Date(test.registeredAt).toLocaleDateString()}
+                      {test.type} • Registered <span suppressHydrationWarning>{new Date(test.registeredAt).toLocaleDateString()}</span>
                     </p>
                   </div>
                 </div>
@@ -155,7 +166,7 @@ export function TestRegistration({ tests, setTests, savedTestSuites, onDeleteTes
                   <div>
                     <h3 className="font-medium text-foreground">{suite.name}</h3>
                     <p className="text-sm text-muted-foreground">
-                      {suite.totalTests} tests • Saved {new Date(suite.savedAt).toLocaleDateString()}
+                      {suite.totalTests} tests • Saved <span suppressHydrationWarning>{new Date(suite.savedAt).toLocaleDateString()}</span>
                     </p>
                   </div>
                 </div>
