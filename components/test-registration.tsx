@@ -5,11 +5,12 @@ import type React from "react"
 import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Plus, FileText, Clock } from "lucide-react"
+import { Plus, FileText, Clock, Download } from "lucide-react"
 import { RegisterTestDialog } from "@/components/dialogs/register-test-dialog"
 import { TestDetailsDialog } from "@/components/dialogs/test-details-dialog"
 import { TestSuiteDetailsDialog } from "@/components/dialogs/test-suite-details-dialog"
-import { SavedTestSuite } from "@/app/page"
+import { ExportDataDialog } from "@/components/dialogs/export-data-dialog"
+import type { SavedTestSuite } from "@/app/page"
 
 export interface Test {
   id: string
@@ -35,6 +36,8 @@ export function TestRegistration({ tests, setTests, savedTestSuites, onDeleteTes
   const [selectedTest, setSelectedTest] = useState<Test | null>(null)
   const [testSuiteDetailsOpen, setTestSuiteDetailsOpen] = useState(false)
   const [selectedTestSuite, setSelectedTestSuite] = useState<SavedTestSuite | null>(null)
+  const [exportSeedTestsOpen, setExportSeedTestsOpen] = useState(false)
+  const [exportTestSuitesOpen, setExportTestSuitesOpen] = useState(false)
 
   const handleAddTest = (newTest: Omit<Test, "id" | "registeredAt">) => {
     const test: Test = {
@@ -78,6 +81,14 @@ export function TestRegistration({ tests, setTests, savedTestSuites, onDeleteTes
     return testDate >= sevenDaysAgo
   }).length
 
+  const handleExportSeedTests = () => {
+    setExportSeedTestsOpen(true)
+  }
+
+  const handleExportTestSuites = () => {
+    setExportTestSuitesOpen(true)
+  }
+
   return (
     <div className="space-y-6">
       <div className="grid gap-4 md:grid-cols-2">
@@ -112,10 +123,16 @@ export function TestRegistration({ tests, setTests, savedTestSuites, onDeleteTes
               <CardTitle>Seed Tests</CardTitle>
               <CardDescription>Manage and view all seed test cases</CardDescription>
             </div>
-            <Button onClick={() => setRegisterDialogOpen(true)} className="gap-2">
-              <Plus className="h-4 w-4" />
-              Add Seed Test
-            </Button>
+            <div className="flex gap-2">
+              <Button onClick={() => setRegisterDialogOpen(true)} className="gap-2">
+                <Plus className="h-4 w-4" />
+                Add Seed Test
+              </Button>
+              <Button onClick={handleExportSeedTests} variant="outline" className="gap-2 bg-transparent">
+                <Download className="h-4 w-4" />
+                Export
+              </Button>
+            </div>
           </div>
         </CardHeader>
         <CardContent>
@@ -137,7 +154,8 @@ export function TestRegistration({ tests, setTests, savedTestSuites, onDeleteTes
                   <div>
                     <h3 className="font-medium text-foreground">{test.name}</h3>
                     <p className="text-sm text-muted-foreground">
-                      {test.type} • Registered <span suppressHydrationWarning>{new Date(test.registeredAt).toLocaleDateString()}</span>
+                      {test.type} • Registered{" "}
+                      <span suppressHydrationWarning>{new Date(test.registeredAt).toLocaleDateString()}</span>
                     </p>
                   </div>
                 </div>
@@ -149,9 +167,15 @@ export function TestRegistration({ tests, setTests, savedTestSuites, onDeleteTes
 
       <Card>
         <CardHeader>
-          <div>
-            <CardTitle>Saved Test Suites</CardTitle>
-            <CardDescription>View all saved test suite configurations</CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Saved Test Suites</CardTitle>
+              <CardDescription>View all saved test suite configurations</CardDescription>
+            </div>
+            <Button onClick={handleExportTestSuites} variant="outline" className="gap-2 bg-transparent">
+              <Download className="h-4 w-4" />
+              Export
+            </Button>
           </div>
         </CardHeader>
         <CardContent>
@@ -166,7 +190,8 @@ export function TestRegistration({ tests, setTests, savedTestSuites, onDeleteTes
                   <div>
                     <h3 className="font-medium text-foreground">{suite.name}</h3>
                     <p className="text-sm text-muted-foreground">
-                      {suite.totalTests} tests • Saved <span suppressHydrationWarning>{new Date(suite.savedAt).toLocaleDateString()}</span>
+                      {suite.totalTests} tests • Saved{" "}
+                      <span suppressHydrationWarning>{new Date(suite.savedAt).toLocaleDateString()}</span>
                     </p>
                   </div>
                 </div>
@@ -191,6 +216,20 @@ export function TestRegistration({ tests, setTests, savedTestSuites, onDeleteTes
         onOpenChange={setTestSuiteDetailsOpen}
         testSuite={selectedTestSuite}
         onDeleteTestSuite={handleDeleteTestSuite}
+      />
+      <ExportDataDialog
+        open={exportSeedTestsOpen}
+        onOpenChange={setExportSeedTestsOpen}
+        title="Export Seed Tests"
+        data={tests}
+        filename={`seed-tests-${new Date().toISOString().split("T")[0]}.json`}
+      />
+      <ExportDataDialog
+        open={exportTestSuitesOpen}
+        onOpenChange={setExportTestSuitesOpen}
+        title="Export Test Suites"
+        data={savedTestSuites}
+        filename={`test-suites-${new Date().toISOString().split("T")[0]}.json`}
       />
     </div>
   )

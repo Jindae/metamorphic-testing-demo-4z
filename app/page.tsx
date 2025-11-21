@@ -6,10 +6,9 @@ import { MetamorphicTestGeneration, type MetamorphicRelation } from "@/component
 import { TestResultStatistics } from "@/components/test-result-statistics"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { FlaskConical, GitBranch, BarChart3 } from "lucide-react"
-import initialSeedTestsData from "@/data/seed-tests.json"
-import initialTestSuitesData from "@/data/test-suites.json"
-import initialExecutionHistoryData from "@/data/execution-history.json"
 import { NotificationDialog } from "@/components/dialogs/notification-dialog"
+import defaultSeedTests from "@/data/seed-tests.json"
+import defaultTestSuites from "@/data/test-suites.json"
 
 export interface TestGenerationStats {
   totalGenerated: number
@@ -58,7 +57,7 @@ export interface ExecutionHistoryEntry {
 
 export default function TestMonitoringDashboard() {
   const [activeTab, setActiveTab] = useState("registration")
-  const [seedTests, setSeedTests] = useState<Test[]>(initialSeedTestsData as Test[])
+  const [seedTests, setSeedTests] = useState<Test[]>([])
   const [generationStats, setGenerationStats] = useState<TestGenerationStats>({
     totalGenerated: 0,
     successRate: 0,
@@ -81,51 +80,84 @@ export default function TestMonitoringDashboard() {
     isExecuting: false,
   })
 
-  const [savedTestSuites, setSavedTestSuites] = useState<SavedTestSuite[]>(initialTestSuitesData as SavedTestSuite[])
-  const [executionHistory, setExecutionHistory] = useState<Record<string, ExecutionHistoryEntry[]>>(
-    initialExecutionHistoryData as Record<string, ExecutionHistoryEntry[]>,
-  )
+  const [savedTestSuites, setSavedTestSuites] = useState<SavedTestSuite[]>([])
+  const [executionHistory, setExecutionHistory] = useState<Record<string, ExecutionHistoryEntry[]>>({})
   const [currentTestSuiteId, setCurrentTestSuiteId] = useState<string | null>(null)
+  const [isLoaded, setIsLoaded] = useState(false)
 
   useEffect(() => {
+    if (typeof window === "undefined") return
+
     try {
+      // Load seed tests
       const storedSeedTests = localStorage.getItem("seedTests")
       if (storedSeedTests) {
         setSeedTests(JSON.parse(storedSeedTests))
+      } else {
+        setSeedTests(defaultSeedTests)
       }
-      const stored = localStorage.getItem("savedTestSuites")
-      if (stored) {
-        setSavedTestSuites(JSON.parse(stored))
+
+      // Load test suites
+      const storedTestSuites = localStorage.getItem("savedTestSuites")
+      if (storedTestSuites) {
+        setSavedTestSuites(JSON.parse(storedTestSuites))
+      } else {
+        setSavedTestSuites(defaultTestSuites)
       }
+
+      // Load execution history
       const storedHistory = localStorage.getItem("executionHistory")
       if (storedHistory) {
         setExecutionHistory(JSON.parse(storedHistory))
       }
+
+      setIsLoaded(true)
     } catch (error) {
-      console.error("Failed to load test suites from localStorage:", error)
-      setSeedTests(initialSeedTestsData as Test[])
-      setSavedTestSuites(initialTestSuitesData as SavedTestSuite[])
-      setExecutionHistory(initialExecutionHistoryData as Record<string, ExecutionHistoryEntry[]>)
+      console.error("Failed to load data from localStorage:", error)
+      setSeedTests(defaultSeedTests)
+      setSavedTestSuites(defaultTestSuites)
+      setIsLoaded(true)
     }
   }, [])
 
   useEffect(() => {
-    localStorage.setItem("seedTests", JSON.stringify(seedTests))
-  }, [seedTests])
+    if (!isLoaded) return
+    if (typeof window === "undefined") return
 
-  useEffect(() => {
-    if (savedTestSuites.length > 0) {
-      localStorage.setItem("savedTestSuites", JSON.stringify(savedTestSuites))
+    try {
+      localStorage.setItem("seedTests", JSON.stringify(seedTests))
+    } catch (error) {
+      console.error("Failed to save seed tests to localStorage:", error)
     }
-  }, [savedTestSuites])
+  }, [seedTests, isLoaded])
 
   useEffect(() => {
-    localStorage.setItem("executionHistory", JSON.stringify(executionHistory))
-  }, [executionHistory])
+    if (!isLoaded) return
+    if (typeof window === "undefined") return
+
+    try {
+      localStorage.setItem("savedTestSuites", JSON.stringify(savedTestSuites))
+    } catch (error) {
+      console.error("Failed to save test suites to localStorage:", error)
+    }
+  }, [savedTestSuites, isLoaded])
+
+  useEffect(() => {
+    if (!isLoaded) return
+    if (typeof window === "undefined") return
+
+    try {
+      localStorage.setItem("executionHistory", JSON.stringify(executionHistory))
+    } catch (error) {
+      console.error("Failed to save execution history to localStorage:", error)
+    }
+  }, [executionHistory, isLoaded])
 
   const handleSaveTestSuite = () => {
+    const suiteId = currentTestSuiteId || Date.now().toString()
+
     const newSuite: SavedTestSuite = {
-      id: Date.now().toString(),
+      id: suiteId,
       name: testSuiteName,
       description: testSuiteDescription,
       selectedSeedTest,
@@ -135,7 +167,17 @@ export default function TestMonitoringDashboard() {
       savedAt: new Date().toISOString(),
     }
 
-    setSavedTestSuites((prev) => [...prev, newSuite])
+    setSavedTestSuites((prev) => {
+      const existingIndex = prev.findIndex((s) => s.id === suiteId)
+      if (existingIndex >= 0) {
+        const updated = [...prev]
+        updated[existingIndex] = newSuite
+        return updated
+      }
+      return [...prev, newSuite]
+    })
+
+    setCurrentTestSuiteId(suiteId)
     setNotificationTitle("Success")
     setNotificationMessage(`Test suite "${testSuiteName}" saved successfully!`)
     setNotificationType("success")
@@ -179,13 +221,16 @@ export default function TestMonitoringDashboard() {
   }
 
   const handleExecutionComplete = (executionResult: ExecutionHistoryEntry) => {
-    if (!currentTestSuiteId) return
+    const suiteId = currentTestSuiteId || `temp-${Date.now()}`
+    if (!currentTestSuiteId) {
+      setCurrentTestSuiteId(suiteId)
+    }
 
     setExecutionHistory((prev) => {
-      const suiteHistory = prev[currentTestSuiteId] || []
+      const suiteHistory = prev[suiteId] || []
       return {
         ...prev,
-        [currentTestSuiteId]: [...suiteHistory, executionResult],
+        [suiteId]: [...suiteHistory, executionResult],
       }
     })
   }
@@ -207,13 +252,11 @@ export default function TestMonitoringDashboard() {
     setExecutionHistory((prev) => {
       const updated = { ...prev }
       delete updated[suiteId]
-      localStorage.setItem("executionHistory", JSON.stringify(updated))
       return updated
     })
 
     setSavedTestSuites((prev) => {
       const updated = prev.filter((s) => s.id !== suiteId)
-      localStorage.setItem("savedTestSuites", JSON.stringify(updated))
       return updated
     })
   }
@@ -223,9 +266,16 @@ export default function TestMonitoringDashboard() {
   const [notificationMessage, setNotificationMessage] = useState("")
   const [notificationType, setNotificationType] = useState<"success" | "error" | "info">("success")
 
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-muted-foreground">Loading...</div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <header className="border-b border-border bg-card">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
@@ -247,7 +297,6 @@ export default function TestMonitoringDashboard() {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="container mx-auto px-6 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-3 lg:w-[600px]">
@@ -314,7 +363,6 @@ export default function TestMonitoringDashboard() {
         </Tabs>
       </main>
 
-      {/* Notification Dialog */}
       <NotificationDialog
         open={notificationOpen}
         onOpenChange={setNotificationOpen}
